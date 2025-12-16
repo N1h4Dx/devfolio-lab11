@@ -85,3 +85,133 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+/* ===== Lab 12: Memory Game ===== */
+
+const symbols = ["🍎","🍌","🍇","🍓","🍒","🥝","🍍","🥥","🍑","🍋","🍉","🍊"];
+
+const board = document.getElementById("gameBoard");
+const movesEl = document.getElementById("moves");
+const matchesEl = document.getElementById("matches");
+const winMessage = document.getElementById("winMessage");
+const difficultySelect = document.getElementById("difficulty");
+
+let firstCard = null;
+let secondCard = null;
+let lockBoard = false;
+let moves = 0;
+let matches = 0;
+let totalPairs = 0;
+let timer = 0;
+let timerInterval = null;
+
+
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function setupBoard() { 
+  board.innerHTML = "";
+  winMessage.textContent = "";
+  moves = 0;
+  matches = 0;
+  movesEl.textContent = 0;
+  matchesEl.textContent = 0;
+  firstCard = null;
+  secondCard = null;
+  lockBoard = false;
+
+  let pairCount = difficultySelect.value === "easy" ? 6 : 12;
+  totalPairs = pairCount;
+
+
+  let cards = shuffle([
+    ...symbols.slice(0, pairCount),
+    ...symbols.slice(0, pairCount)
+  ]);
+
+  board.style.gridTemplateColumns =
+    difficultySelect.value === "easy"
+      ? "repeat(4, 1fr)"
+      : "repeat(6, 1fr)";
+
+  cards.forEach(symbol => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.symbol = symbol;
+    card.textContent = "?";
+
+    card.addEventListener("click", () => flipCard(card));
+    board.appendChild(card);
+  });
+  startTimer(); // 👈 THIS IS STEP 2C
+
+}
+
+function flipCard(card) {
+  if (lockBoard || card === firstCard || card.classList.contains("matched")) return;
+
+  card.textContent = card.dataset.symbol;
+  card.classList.add("open");
+
+  if (!firstCard) {
+    firstCard = card;
+    return;
+  }
+
+  secondCard = card;
+  moves++;
+  movesEl.textContent = moves;
+
+  checkMatch();
+}
+
+function checkMatch() {
+  if (firstCard.dataset.symbol === secondCard.dataset.symbol) {
+    firstCard.classList.add("matched");
+    secondCard.classList.add("matched");
+    matches++;
+    matchesEl.textContent = matches;
+    resetTurn();
+
+    if (matches === totalPairs) {
+      winMessage.textContent = "You win!";
+    }
+  } else {
+    lockBoard = true;
+    setTimeout(() => {
+      firstCard.textContent = "?";
+      secondCard.textContent = "?";
+      firstCard.classList.remove("open");
+      secondCard.classList.remove("open");
+      resetTurn();
+    }, 1000);
+  }
+}
+
+function resetTurn() {
+  firstCard = null;
+  secondCard = null;
+  lockBoard = false;
+}
+
+document.getElementById("startGame").addEventListener("click", setupBoard);
+document.getElementById("restartGame").addEventListener("click", setupBoard);
+difficultySelect.addEventListener("change", setupBoard);
+
+
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timer = 0;
+  document.getElementById("timer").textContent = timer;
+
+  timerInterval = setInterval(() => {
+    timer++;
+    document.getElementById("timer").textContent = timer;
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}

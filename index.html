@@ -952,6 +952,38 @@ I am Nihad, i am a university student studying Script Programming and web develo
 
     </section><!-- /Contact Section -->
 
+    <section id="memory-game" class="section">
+  <div class="container">
+
+    <h2>Memory Game</h2>
+
+    <div class="game-controls">
+      <label for="difficulty">Difficulty:</label>
+      <select id="difficulty">
+        <option value="easy">Easy (4×3)</option>
+        <option value="hard">Hard (6×4)</option>
+      </select>
+
+      <button id="startGame">Start</button>
+      <button id="restartGame">Restart</button>
+    </div>
+
+   <div class="stats">
+  <p>Moves: <span id="moves">0</span></p>
+  <p>Matches: <span id="matches">0</span></p>
+  <p>Time: <span id="timer">0</span> s</p>
+  <p>Best score: <span id="bestScore">–</span></p>
+</div>
+
+
+    <div id="gameBoard" class="game-board"></div>
+
+    <p id="winMessage" class="win-message"></p>
+
+  </div>
+</section>
+
+
   </main>
 
   <footer id="footer" class="footer accent-background">
